@@ -1,6 +1,7 @@
 import "./Game.css";
 
 import { Column, Move, renderColumn } from "./Column";
+import { coordinates } from "./Board";
 
 export class Game {
   row_count: number;
@@ -19,12 +20,12 @@ export class Game {
   }
 
   playMove = (move: Move, columnIndex: number) => {
-    if (this.isComplete()) return false;
+    if (this.isComplete().status) return false;
     return this.columns[columnIndex].playMove(move);
   };
 
   playRandomMove = (move: Move) => {
-    if (this.isComplete()) return false;
+    if (this.isComplete().status) return false;
     var randomMove = Math.floor(Math.random() * 0.999 * this.col_count);
     while (!this.playMove(move, randomMove)) {
       randomMove = Math.floor(Math.random() * 0.999 * this.col_count);
@@ -34,29 +35,47 @@ export class Game {
 
   isComplete = () => {
     const winStatus = this.checkWin();
-    if (winStatus !== 0) {
-      alert(winStatus);
-      return true;
+    if (winStatus.winner !== 0) {
+      //  alert(winStatus);
+      return { status: true, ...winStatus };
     }
-    return this.columns.reduce((prev, col) => prev && col.isComplete(), true);
+    return {
+      status: this.columns.reduce(
+        (prev, col) => prev && col.isComplete(),
+        true
+      ),
+      winner: 0 as 0,
+    };
   };
 
   checkWin = () => {
     // Check columns
     for (let i = 0; i < this.col_count; i++) {
       const winStatus = this.columns[i].checkWin();
-      if (winStatus === 0) continue;
-      return winStatus;
+      if (winStatus.winner === 0) continue;
+
+      const winCoordinates: coordinates[] = Array(4)
+        .fill(0)
+        .map((_, index) => {
+          return { col: i, row: winStatus.pos + index };
+        });
+      return { winner: winStatus.winner, coordinates: winCoordinates };
     }
 
     // Check rows
     for (let i = 0; i < this.row_count; i++) {
       const winStatus = checkVectorWin(this.getRow(i));
-      if (winStatus === 0) continue;
-      return winStatus;
+      if (winStatus.winner === 0) continue;
+
+      const winCoordinates: coordinates[] = Array(4)
+        .fill(0)
+        .map((_, index) => {
+          return { col: winStatus.pos + index, row: i };
+        });
+      return { winner: winStatus.winner, coordinates: winCoordinates };
     }
 
-    return 0;
+    return { winner: 0 as 0 };
   };
 
   getRow = (rowIndex: number) => {
@@ -73,7 +92,9 @@ export const renderGame = (
   selectedColumn: number,
   mouseEnterHandler: (arg0: number) => void,
   clickHandler: (arg0: number) => void,
-  gameCompleted: boolean
+  gameCompleted: boolean,
+  winner: Move,
+  winCoordinates: coordinates[]
 ) => {
   return (
     <div className="game">
@@ -84,7 +105,9 @@ export const renderGame = (
           selectedColumn === i,
           mouseEnterHandler,
           clickHandler,
-          gameCompleted
+          gameCompleted,
+          winner,
+          winCoordinates
         )
       )}
     </div>
@@ -92,22 +115,19 @@ export const renderGame = (
 };
 
 export const checkVectorWin = (vector: Move[]) => {
-  console.log(vector);
-
   var lastMove = vector[0];
   var moveCount = 1;
 
   for (let i = 1; i < vector.length; i++) {
     const currMove = vector[i];
-    console.log(currMove);
-    if (currMove === lastMove) {
+    if (currMove === lastMove && currMove !== 0) {
       moveCount++;
-      if (moveCount === 4) return currMove;
+      if (moveCount === 4) return { winner: currMove, pos: i - 3 };
       continue;
     }
     lastMove = currMove;
     moveCount = 1;
   }
 
-  return 0;
+  return { winner: 0 as 0, pos: null };
 };
