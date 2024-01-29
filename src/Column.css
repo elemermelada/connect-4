@@ -1,0 +1,24 @@
+.column {
+    cursor: pointer;
+    flex-grow: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-around;
+}
+
+.selected {
+    box-shadow:1px 1px 15px 2px green !important;
+}
+
+.move {
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow:1px 1px 15px 2px #aaaaaa;
+
+    width: min(750px/7/1.2, 80vw/7/1.2);   /* TODO - using sass or something would be great to change the board size here */
+    height: min(750px/7/1.2, 80vw/7/1.2);
+    
+    border-radius: 50%;
+    background-color: red;
+}
