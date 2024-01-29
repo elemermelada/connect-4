@@ -1,4 +1,5 @@
 import "./Column.css";
+import { checkVectorWin } from "./Game";
 
 export type Move = 0 | -1 | 1; // None, CPU, Player
 
@@ -23,6 +24,12 @@ export class Column {
     if (first_empty === -1) return true;
     return false;
   };
+
+  checkWin = () => {
+    const first_empty = this.rows.indexOf(0);
+    if (first_empty < 3) return 0;
+    return checkVectorWin(this.rows);
+  };
 }
 
 export const renderMove = (move: Move, isSelected: boolean) => {
@@ -43,15 +50,19 @@ export const renderColumn = (
   index: number,
   isSelected: boolean,
   mouseEnterHandler: (arg0: number) => void,
-  clickHandler: (arg0: number) => void
+  clickHandler: (arg0: number) => void,
+  gameCompleted: boolean
 ) => {
   return (
     <div
       className="column"
+      style={{ cursor: gameCompleted ? "default" : "pointer" }}
       onMouseEnter={() => {
+        if (gameCompleted) return;
         mouseEnterHandler(index);
       }}
       onClick={() => {
+        if (gameCompleted) return;
         clickHandler(index);
       }}
     >

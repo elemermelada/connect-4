@@ -8,6 +8,8 @@ const Board = ({ ...props }) => {
   const cols: number = props.cols;
 
   const [isStarted, setIsStarted] = useState<boolean>(false);
+  const [gameCompleted, setGameCompleted] = useState<boolean>(false);
+
   const [game, setGame] = useState<Game>(new Game(rows, cols));
   const [selectedColumn, setSelectedColumn] = useState<number>(-1);
 
@@ -26,11 +28,21 @@ const Board = ({ ...props }) => {
   return (
     <div className="board">
       {isStarted
-        ? renderGame(game, selectedColumn, setSelectedColumn, (i) => {
-            if (!game.playMove(1, i)) return;
-            if (!game.playRandomMove(-1)) return;
-            setGame({ ...game });
-          })
+        ? renderGame(
+            game,
+            selectedColumn,
+            setSelectedColumn,
+            (i) => {
+              if (!game.playMove(1, i)) return;
+              if (!game.playRandomMove(-1) || game.isComplete()) {
+                setSelectedColumn(-1);
+                setGameCompleted(true);
+              }
+
+              setGame({ ...game });
+            },
+            gameCompleted
+          )
         : renderStartGame()}
     </div>
   );

@@ -33,7 +33,38 @@ export class Game {
   };
 
   isComplete = () => {
+    const winStatus = this.checkWin();
+    if (winStatus !== 0) {
+      alert(winStatus);
+      return true;
+    }
     return this.columns.reduce((prev, col) => prev && col.isComplete(), true);
+  };
+
+  checkWin = () => {
+    // Check columns
+    for (let i = 0; i < this.col_count; i++) {
+      const winStatus = this.columns[i].checkWin();
+      if (winStatus === 0) continue;
+      return winStatus;
+    }
+
+    // Check rows
+    for (let i = 0; i < this.row_count; i++) {
+      const winStatus = checkVectorWin(this.getRow(i));
+      if (winStatus === 0) continue;
+      return winStatus;
+    }
+
+    return 0;
+  };
+
+  getRow = (rowIndex: number) => {
+    const row: Move[] = [];
+    for (let i = 0; i < this.col_count; i++) {
+      row.push(this.columns[i].rows[rowIndex]);
+    }
+    return row;
   };
 }
 
@@ -41,7 +72,8 @@ export const renderGame = (
   game: Game,
   selectedColumn: number,
   mouseEnterHandler: (arg0: number) => void,
-  clickHandler: (arg0: number) => void
+  clickHandler: (arg0: number) => void,
+  gameCompleted: boolean
 ) => {
   return (
     <div className="game">
@@ -51,9 +83,31 @@ export const renderGame = (
           i,
           selectedColumn === i,
           mouseEnterHandler,
-          clickHandler
+          clickHandler,
+          gameCompleted
         )
       )}
     </div>
   );
+};
+
+export const checkVectorWin = (vector: Move[]) => {
+  console.log(vector);
+
+  var lastMove = vector[0];
+  var moveCount = 1;
+
+  for (let i = 1; i < vector.length; i++) {
+    const currMove = vector[i];
+    console.log(currMove);
+    if (currMove === lastMove) {
+      moveCount++;
+      if (moveCount === 4) return currMove;
+      continue;
+    }
+    lastMove = currMove;
+    moveCount = 1;
+  }
+
+  return 0;
 };
