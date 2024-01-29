@@ -35,8 +35,8 @@ export class Column {
 
 export const renderMove = (move: Move, isSelected: boolean) => {
   var col = "white";
-  if (move === 1) col = "green";
-  if (move === -1) col = "red";
+  if (move === 1) col = "red";
+  if (move === -1) col = "yellow";
 
   return (
     <div

@@ -7,13 +7,13 @@
 }
 
 .selected {
-    box-shadow:1px 1px 15px 2px yellow !important;
+    box-shadow:2px 2px 30px 4px orange !important;
 }
 
 .move {
     margin-left: auto;
     margin-right: auto;
-    box-shadow:1px 1px 15px 2px #aaaaaa;
+    box-shadow:1px 1px 15px 2px #99f;
 
     width: min(750px/7/1.2, 80vw/7/1.2);   /* TODO - using sass or something would be great to change the board size here */
     height: min(750px/7/1.2, 80vw/7/1.2);
