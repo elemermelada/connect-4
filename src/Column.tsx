@@ -33,14 +33,14 @@ export class Column {
   };
 }
 
-export const renderMove = (move: Move, isSelected: boolean) => {
+export const renderMove = (move: Move, isSelected: string) => {
   var col = "white";
   if (move === 1) col = "red";
   if (move === -1) col = "#F4C430";
 
   return (
     <div
-      className={isSelected ? "move selected" : "move"}
+      className={"move " + isSelected}
       style={{ backgroundColor: col }}
     ></div>
   );
@@ -49,6 +49,7 @@ export const renderMove = (move: Move, isSelected: boolean) => {
 export const renderColumn = (
   column: Column,
   columnIndex: number,
+  turn: Move,
   isSelected: boolean,
   mouseEnterHandler: (arg0: number) => void,
   clickHandler: (arg0: number) => void,
@@ -56,7 +57,6 @@ export const renderColumn = (
   winner: Move,
   winCoordinates: coordinates[]
 ) => {
-  console.log(winCoordinates);
   return (
     <div
       className="column"
@@ -73,13 +73,12 @@ export const renderColumn = (
       {column.rows.map((m, i) => {
         if (m === 0 && isSelected) {
           isSelected = false;
-          return renderMove(m, true);
+          return renderMove(m, "selected_" + turn);
         }
-        console.log(columnIndex, i);
         if (winCoordinates.some((c) => c.col === columnIndex && c.row === i)) {
-          return renderMove(m, true);
+          return renderMove(m, "selected_" + winner);
         }
-        return renderMove(m, false);
+        return renderMove(m, "");
       })}
     </div>
   );

@@ -1,6 +1,6 @@
 import "./Board.css";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Game, renderGame } from "./Game";
 import { Move } from "./Column";
 
@@ -14,6 +14,7 @@ const Board = ({ ...props }) => {
   const cols: number = props.cols;
 
   const [isStarted, setIsStarted] = useState<boolean>(false);
+  const [turn, setTurn] = useState<Move>(1);
   const [gameCompleted, setGameCompleted] = useState<boolean>(false);
   const [winCoordinates, setWinCoordinates] = useState<coordinates[]>([]);
   const [winner, setWinner] = useState<Move>(0);
@@ -38,11 +39,13 @@ const Board = ({ ...props }) => {
       {isStarted
         ? renderGame(
             game,
+            turn,
             selectedColumn,
             setSelectedColumn,
             (i) => {
-              if (!game.playMove(1, i)) return;
-              if (!game.playRandomMove(-1) || game.isComplete().status) {
+              if (!game.playMove(turn, i)) return; // Couldnt play move, skipping
+              setTurn(turn === 1 ? -1 : 1);
+              if (game.isComplete().status) {
                 const gameStatus = game.isComplete();
                 setSelectedColumn(-1);
                 setGameCompleted(true);

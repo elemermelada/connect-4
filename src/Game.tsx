@@ -50,6 +50,8 @@ export class Game {
 
   checkDiagonalWin = (col: number, row: number, direction: 1 | -1 = 1) => {
     const diagonal: Move[] = [];
+    const col_ini = col;
+    const row_ini = row;
     while (true) {
       // Could definitelly refactor this
       const move = this.columns[col].rows[row];
@@ -62,12 +64,13 @@ export class Game {
     const winStatus = checkVectorWin(diagonal);
     if (winStatus.winner === 0) return { winner: 0 as 0, coordinates: [] };
 
+    console.log("wtj", winStatus.pos, col, row);
     const winCoordinates: coordinates[] = Array(4)
       .fill(0)
       .map((_, index) => {
         return {
-          col: col + winStatus.pos + index * direction - 5 * direction,
-          row: row + winStatus.pos + index - 5,
+          col: col_ini + (winStatus.pos + index) * direction,
+          row: row_ini + winStatus.pos + index,
         };
       });
     return { winner: winStatus.winner, coordinates: winCoordinates };
@@ -137,6 +140,7 @@ export class Game {
 
 export const renderGame = (
   game: Game,
+  turn: Move,
   selectedColumn: number,
   mouseEnterHandler: (arg0: number) => void,
   clickHandler: (arg0: number) => void,
@@ -150,6 +154,7 @@ export const renderGame = (
         renderColumn(
           c,
           i,
+          turn,
           selectedColumn === i,
           mouseEnterHandler,
           clickHandler,
