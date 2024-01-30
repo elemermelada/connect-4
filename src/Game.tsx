@@ -48,6 +48,31 @@ export class Game {
     };
   };
 
+  checkDiagonalWin = (col: number, row: number, direction: 1 | -1 = 1) => {
+    const diagonal: Move[] = [];
+    while (true) {
+      // Could definitelly refactor this
+      const move = this.columns[col].rows[row];
+      diagonal.push(move);
+      col += direction;
+      row++;
+      if (col === this.col_count || row === this.row_count) break;
+      if (col === -1 || row === -1) break;
+    }
+    const winStatus = checkVectorWin(diagonal);
+    if (winStatus.winner === 0) return { winner: 0 as 0, coordinates: [] };
+
+    const winCoordinates: coordinates[] = Array(4)
+      .fill(0)
+      .map((_, index) => {
+        return {
+          col: col + winStatus.pos + index * direction - 5 * direction,
+          row: row + winStatus.pos + index - 5,
+        };
+      });
+    return { winner: winStatus.winner, coordinates: winCoordinates };
+  };
+
   checkWin = () => {
     // Check columns
     for (let i = 0; i < this.col_count; i++) {
@@ -73,6 +98,29 @@ export class Game {
           return { col: winStatus.pos + index, row: i };
         });
       return { winner: winStatus.winner, coordinates: winCoordinates };
+    }
+
+    // Check diagonals
+    // This could be improved if cols>rows is guaranteed (repeating many checks now)
+    for (let i = 0; i < this.row_count; i++) {
+      let winStatus = this.checkDiagonalWin(0, i, 1);
+      if (winStatus.winner !== 0) return winStatus;
+      winStatus = this.checkDiagonalWin(0, i, -1);
+      if (winStatus.winner !== 0) return winStatus;
+      winStatus = this.checkDiagonalWin(this.col_count - 1, i, 1);
+      if (winStatus.winner !== 0) return winStatus;
+      winStatus = this.checkDiagonalWin(this.col_count - 1, i, -1);
+      if (winStatus.winner !== 0) return winStatus;
+    }
+    for (let i = 0; i < this.col_count; i++) {
+      let winStatus = this.checkDiagonalWin(i, 0, 1);
+      if (winStatus.winner !== 0) return winStatus;
+      winStatus = this.checkDiagonalWin(i, 0, -1);
+      if (winStatus.winner !== 0) return winStatus;
+      // winStatus = this.checkDiagonalWin(i, this.row_count - 1, 1);
+      // if (winStatus.winner !== 0) return winStatus;
+      // winStatus = this.checkDiagonalWin(i, this.row_count - 1, -1);
+      // if (winStatus.winner !== 0) return winStatus;
     }
 
     return { winner: 0 as 0 };

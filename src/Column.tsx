@@ -36,7 +36,7 @@ export class Column {
 export const renderMove = (move: Move, isSelected: boolean) => {
   var col = "white";
   if (move === 1) col = "red";
-  if (move === -1) col = "yellow";
+  if (move === -1) col = "#F4C430";
 
   return (
     <div
@@ -56,6 +56,7 @@ export const renderColumn = (
   winner: Move,
   winCoordinates: coordinates[]
 ) => {
+  console.log(winCoordinates);
   return (
     <div
       className="column"
@@ -74,6 +75,7 @@ export const renderColumn = (
           isSelected = false;
           return renderMove(m, true);
         }
+        console.log(columnIndex, i);
         if (winCoordinates.some((c) => c.col === columnIndex && c.row === i)) {
           return renderMove(m, true);
         }
