@@ -3,7 +3,7 @@
     height: min(0.8*750px, 0.8*80vw);
     padding:10px;
     border-radius: 10px;
-    background-color: blue;
+    background-color: #1c64ee;
     box-shadow:1px 1px 15px 2px #000000;
     /* border:1px solid #aaaaaa; */
     margin:auto;
